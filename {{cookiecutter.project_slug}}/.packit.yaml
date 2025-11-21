@@ -25,7 +25,9 @@ jobs:
     owner: "r0x0d"
     project: {{cookiecutter.project_slug}}
     targets:
-      - fedora-all
+    {% for chroot in cookiecutter.chroots %}
+		  - {{chroot}}
+    {% endfor %}
 
   # Build RPMs for main branch
   - job: copr_build
@@ -34,4 +36,6 @@ jobs:
     owner: "r0x0d"
     project: {{cookiecutter.project_slug}}
     targets:
-      - fedora-all
+    {% for chroot in cookiecutter.chroots %}
+		  - {{chroot}}
+    {% endfor %}
