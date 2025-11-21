@@ -1,3 +1,6 @@
 {
-    "project_slug": "Project slug"
+    "project_slug": "rust-...",
+    "upstream_repo": "https://github.com/...",
+    "upstream_repo_name": "...",
+    "chroots": "fedora-rawhide-x86_64,fedora-41-x86_64,fedora-42-x86_64,fedora-43-x86_64"
 }
