@@ -4,7 +4,9 @@ SPEC_FILE := https://raw.githubusercontent.com/r0x0d/$(NAME)/refs/heads/main/$(N
 
 .PHONY: create-copr-repo
 create-copr-repo:
-	copr create --chroot fedora-rawhide-x86_64 $(NAME)
+	copr create --chroot fedora-rawhide-x86_64 \
+		--packit-forge-project-allowed https://github.com/r0x0d/$(NAME) \
+		$(NAME)
 	copr edit-permissions --builder packit --admin packit $(NAME)
 
 .PHONY: create-gh-repo
