@@ -16,7 +16,7 @@ actions:
   # https://packit.dev/docs/configuration/actions#create-archive
   create-archive:
     - bash -c "make sources"
-    - bash -c "ls -1 *.crate | grep '{{cookiecutter.upstream_repo_name}}'"
+    - bash -c "ls -1 *.crate"
 
 jobs:
   # Build RPMs for each pull request

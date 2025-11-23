@@ -4,17 +4,20 @@ SPEC_FILE := https://raw.githubusercontent.com/r0x0d/$(NAME)/refs/heads/main/$(N
 
 .PHONY: create-copr-repo
 create-copr-repo:
-	copr create $(NAME)
+	copr create --chroot fedora-rawhide-x86_64 $(NAME)
 	copr edit-permissions --builder packit --admin packit $(NAME)
 
 .PHONY: create-gh-repo
 create-gh-repo:
+	git init
+	git add . && git commit -m "Initial commit"
 	gh repo create {{cookiecutter.project_slug}} \
 		--public \
 		--disable-wiki \
 		--remote origin \
+		--source . \
+		--push \
 		--description "Upstream rpm repository for {{cookiecutter.upstream_repo_name}}" 
-	git add . && git commit -m "Initial commit" && git push origin HEAD
 
 .PHONY: rust2rpm
 rust2rpm:
