@@ -2,15 +2,10 @@ NAME := {{cookiecutter.project_slug}}
 CRATE_NAME := {{cookiecutter.crate_name}}
 SPEC_FILE := https://raw.githubusercontent.com/r0x0d/$(NAME)/refs/heads/main/$(NAME).spec
 
-all: copr-build srpm sources rust2rpm create-copr-repo
-
 .PHONY: create-copr-repo
 create-copr-repo:
-	copr create $(NAME) \
-		{% for chroot in cookiecutter.chroots.split(",") %}
-		--chroot {{chroot}} \
-		{% endfor %}
-		--auto-prune "on"
+	copr create $(NAME)
+	copr edit-permissions --builder packit --admin packit $(NAME)
 
 .PHONY: create-gh-repo
 create-gh-repo:
@@ -19,6 +14,7 @@ create-gh-repo:
 		--disable-wiki \
 		--remote origin \
 		--description "Upstream rpm repository for {{cookiecutter.upstream_repo_name}}" 
+	git add . && git commit -m "Initial commit" && git push origin HEAD
 
 .PHONY: rust2rpm
 rust2rpm:
@@ -26,19 +22,7 @@ rust2rpm:
 
 .PHONY: sources
 sources:
-	fedpkg sources
-
-.PHONY: srpm
-srpm:
-	fedpkg srpm
-
-.PHONY: copr-build
-copr-build:
-	copr build \
-	{% for chroot in cookiecutter.chroots.split(",") %}
-	--chroot {{chroot}} \
-	{% endfor %}	
-	$(NAME) $(NAME)*.src.rpm
+	spectool -g $(NAME).spec
 
 .PHONY: bugzilla-review
 bugzilla-review:
