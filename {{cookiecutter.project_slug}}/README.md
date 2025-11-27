@@ -6,4 +6,4 @@
 * [Fedora Package Review Bugzilla](TODO)
 
 ## COPR status badge
-[![Copr build status](https://copr.fedorainfracloud.org/coprs/r0x0d/${{cookiecutter.project_slug}}/package/${{cookiecutter.project_slug}}/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/r0x0d/${{cookiecutter.project_slug}}/package/${{cookiecutter.project_slug}}/)
+[![Copr build status](https://copr.fedorainfracloud.org/coprs/r0x0d/{{cookiecutter.project_slug}}/package/{{cookiecutter.project_slug}}/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/r0x0d/{{cookiecutter.project_slug}}/package/{{cookiecutter.project_slug}}/)
