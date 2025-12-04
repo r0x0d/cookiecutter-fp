@@ -1,69 +1,40 @@
 NAME := {{cookiecutter.project_slug}}
-CRATE_NAME := {{cookiecutter.crate_name}}
-SPEC_FILE := https://raw.githubusercontent.com/r0x0d/$(NAME)/refs/heads/main/$(NAME).spec
+PKG_NAME := {{cookiecutter.pkg_name}}
+TOOL2RPM := {{cookiecutter.tool_2_rpm}}
 
 .PHONY: create-copr-repo
 create-copr-repo:
-	copr create --chroot fedora-rawhide-x86_64 \
-		--packit-forge-project-allowed https://github.com/r0x0d/$(NAME) \
+	copr create \
+		--chroot fedora-43-x86_64 \
+		--chroot fedora-rawhide-x86_64 \
 		$(NAME)
-	copr edit-permissions --builder packit --admin packit $(NAME)
 
 .PHONY: create-gh-repo
 create-gh-repo:
 	git init
-	git add . && git commit -m "Initial commit"
-	gh repo create {{cookiecutter.project_slug}} \
+	git add . && git commit -m "Initial commit for $(NAME)"
+	gh repo create $(NAME) \
 		--public \
 		--disable-wiki \
 		--remote origin \
 		--source . \
 		--push \
-		--description "Upstream rpm repository for {{cookiecutter.upstream_repo_name}}" 
+		--description "Upstream rpm repository for {{cookiecutter.upstream_repo}}"
 
-.PHONY: rust2rpm
-rust2rpm:
-	rust2rpm $(CRATE_NAME)
+.PHONY: spec
+spec:
+	$(TOOL2RPM) $(PKG_NAME)
 
 .PHONY: sources
 sources:
 	spectool -g $(NAME).spec
 
-.PHONY: bugzilla-review
-bugzilla-review:
-	@if [ ! -f "$(SPEC_FILE)" ]; then \
-		echo "Error: Spec file $(SPEC_FILE) not found"; \
-		exit 1; \
-	fi
-	@echo "Creating Bugzilla review request for $(NAME)..."
-	@SUMMARY=$$(grep -i '^Summary:' $(SPEC_FILE) | head -n1 | sed 's/^Summary:[[:space:]]*//I'); \
-	if [ -z "$$SUMMARY" ]; then \
-		echo "Error: Could not find Summary in $(SPEC_FILE)"; \
-		exit 1; \
-	fi; \
-	API_KEY=$$(secret-tool lookup application bugzilla service fedora); \
-	if [ -z "$$API_KEY" ]; then \
-		echo "Error: Could not retrieve API key from GNOME Keyring"; \
-		exit 1; \
-	fi; \
-	RESPONSE=$$(curl -s -X POST \
-		https://bugzilla.redhat.com/rest/bug \
-		-H "Content-Type: application/json" \
-		-d "{ \
-			\"product\": \"Fedora\", \
-			\"component\": \"Package Review\", \
-			\"summary\": \"Review Request: $(NAME) - $$SUMMARY\", \
-			\"version\": \"rawhide\", \
-			\"description\": \"Spec URL: $(SPEC_URL)\nSRPM URL: $(SRPM_URL)\nDescription: $$SUMMARY\nFedora Account System Username: r0x0d\", \
-			\"api_key\": \"$$API_KEY\" \
-		}"); \
-	BUG_ID=$$(echo $$RESPONSE | grep -o '"id":[0-9]*' | cut -d: -f2); \
-	if [ -n "$$BUG_ID" ]; then \
-		echo "✓ Bug created successfully!"; \
-		echo "Bug ID: $$BUG_ID"; \
-		echo "URL: https://bugzilla.redhat.com/show_bug.cgi?id=$$BUG_ID"; \
-	else \
-		echo "✗ Failed to create bug"; \
-		echo "Response: $$RESPONSE"; \
-		exit 1; \
-	fi
+.PHONY: srpm
+srpm:
+	fedpkg srpm
+
+.PHONY: build
+build: srpm
+	copr build $(NAME) $(NAME)*.src.rpm \
+		--chroot fedora-43-x86_64 \
+		--chroot fedora-rawhide-x86_64

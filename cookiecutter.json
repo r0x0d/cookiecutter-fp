@@ -1,8 +1,8 @@
 {
-    "project_slug": "rust-...",
-    "upstream_repo": "https://github.com/...",
-    "upstream_repo_name": "...",
-    "crate_name": "...",
+    "project_slug": "rust-my-awesome",
+    "upstream_repo": "https://github.com/my/awesome-repo",
+    "pkg_name": "rust-my-awesome",
+    "tool_2_rpm": ["rust2rpm", "pyp2spec"],
     "year": "{% now 'utc', '%Y' %}",
     "_extensions": ["jinja2_time.TimeExtension"]
 }
