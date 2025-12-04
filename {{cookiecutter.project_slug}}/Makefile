@@ -1,5 +1,5 @@
 NAME := {{cookiecutter.project_slug}}
-PKG_NAME := {{cookiecutter.pkg_name}}
+PKG_NAME := $(NAME)
 TOOL2RPM := {{cookiecutter.tool_2_rpm}}
 COPR_USERNAME := {{cookiecutter.copr_username}}
 
