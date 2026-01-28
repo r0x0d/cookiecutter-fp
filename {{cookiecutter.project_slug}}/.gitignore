@@ -1,3 +1,5 @@
 *.crate
 *.tar.gz
 *.src.rpm
+# Ignore extracted package source
+{{cookiecutter.pkg_name}}*
