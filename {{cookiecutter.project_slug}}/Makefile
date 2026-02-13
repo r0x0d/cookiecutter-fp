@@ -3,7 +3,7 @@ PKG_NAME := {{cookiecutter.pkg_name}}
 TOOL2RPM := {{cookiecutter.tool_2_rpm}}
 FAS_USERNAME := {{cookiecutter.fas_username}}
 
-FILES_TO_SYNC := $(wildcard *.src.rpm) $(wildcard *.spec)
+FILES_TO_SYNC := $(wildcard *.src.rpm) $(wildcard $(NAME).spec)
 
 ifneq ("$(wildcard rust2rpm.toml)","")
 FILES_TO_SYNC += rust2rpm.toml
@@ -56,6 +56,9 @@ build:
 .PHONY: sync
 sync:
 	scp $(FILES_TO_SYNC) $(FAS_USERNAME)@fedorapeople.org:/home/fedora/$(FAS_USERNAME)/public_html/$(NAME)
+
+.PHONY: lint
+	rpmlint $(NAME).spec
 
 .PHONY: logs
 logs:
